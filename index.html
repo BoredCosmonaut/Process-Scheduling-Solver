@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section id="main">
+        <div id="top">
+            <select name="algorithm" id="algorithm">
+            <option value="FCFS">First Come First Served</option>
+            <option value="SJF">Shortest Job First</option>
+            <option value="KSJF">Kesilmeli SJF</option>
+            <option value="OPA">Öncelikli Planlama Algoritması</option>
+            <option value="DPA">Döngülü Planlama Algoritması</option>
+        </select>
+            <div id="inputs">
+                <div id="process-boxes">
+                    <input type="text" id="p1" class="process-input" placeholder="1.işlem">
+                    <input type="text" id="p2" class="process-input" placeholder="2.işlem">
+                    <input type="text" id="p3" class="process-input" placeholder="3.işlem">
+                    <input type="text" id="p4" class="process-input" placeholder="4.işlem">
+                    <input type="text" id="p5" class="process-input" placeholder="5.işlem">
+                </div>
+                <div id="enter-time">
+                    <input type="text" id="p1e" class="process-enter" placeholder="Sunuş">
+                    <input type="text" id="p2e" class="process-enter" placeholder="Sunuş">
+                    <input type="text" id="p3e" class="process-enter" placeholder="Sunuş">
+                    <input type="text" id="p4e" class="process-enter" placeholder="Sunuş">
+                    <input type="text" id="p5e" class="process-enter" placeholder="Sunuş">               
+                </div>
+                <div id="priority">
+                    <input type="text" id="p1p" class="process-priority" placeholder="Öncelik">
+                    <input type="text" id="p2p" class="process-priority" placeholder="Öncelik">
+                    <input type="text" id="p3p" class="process-priority" placeholder="Öncelik">
+                    <input type="text" id="p4p" class="process-priority" placeholder="Öncelik">
+                    <input type="text" id="p5p" class="process-priority" placeholder="Öncelik">               
+                </div>
+                <div id="time-period">
+                    <input type="text" id="time-period-input" placeholder="Zaman dilimi">
+                </div>
+            </div>
+            <div id="output">
+                <p id="output-text">Ortalama Bekleme Süresi: <span id="result">0</span></p>
+            </div>           
+        </div>
+        <button id="calculate">Hesapla</button>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>

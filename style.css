@@ -1,0 +1,76 @@
+#main {
+    display: flex;
+    flex-direction: column;
+}
+
+#top {
+    display: flex;
+    flex-direction: row;
+}
+
+#algorithm {
+    position: relative;
+    margin-top: 50px;
+    width: 200px;
+    height: 25px;
+}
+
+#inputs {
+    display: flex;
+    flex-direction: row;
+    margin-left: 2%;
+}
+
+#process-boxes {
+    display: flex;
+    flex-direction: column;
+}
+
+.process-input {
+    margin-top: 2%;
+    width: 30%;
+}
+
+#enter-time {
+    display: none;
+    flex-direction: column;
+    position: relative;
+    left: -90px;
+}
+
+.process-enter {
+    margin-top: 2%;
+    width: 30%;
+}
+
+#priority {
+    display: none;
+    flex-direction: column;
+    position: relative;
+    left: -100px;
+}
+
+.process-priority {
+    margin-top: 2%;
+    width: 30%;
+}
+
+#time-period {
+    display: none;
+    position: relative;
+}
+
+#time-period-input{
+    position: relative;
+    top: 45%;
+    right: 50%;
+}
+
+#calculate {
+    position: relative;
+    top: 10px;
+    margin: auto;
+    width: 250px;
+    height: 30px;
+    border-radius: 10px;
+}
