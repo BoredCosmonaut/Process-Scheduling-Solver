@@ -1,7 +1,8 @@
 
 var output = document.getElementById("result");
-var pInputs = document.getElementById(".process-input");
+var pInputs = document.getElementById(".processesess-input");
 var inputValues = [];
+var enterValues = []
 var priMap = new Map();
 var e = document.getElementById("algorithm");
 var text = "";
@@ -33,6 +34,15 @@ document.getElementById("algorithm").addEventListener("change", () => {
     }
 })
 
+class Process
+{
+    constructor(bt,art)
+    {
+        this.bt = bt;    // Burst Time
+        this.art = art;    // Arrival Time
+    }
+}
+
 document.getElementById("calculate").addEventListener("click", () => {
     var e = document.getElementById("algorithm");
     value = e.value;
@@ -58,29 +68,37 @@ document.getElementById("calculate").addEventListener("click", () => {
         output.innerText = LTA(inputValues,timeFrame);
         inputValues = cleanArray(inputValues);
     } else if(value == "OPA") {
-        let processesArray = [];
+        let processesessesArray = [];
         for(let i = 0; i < 5; i++) {
-            const process = {
-                proccesesTime : inputValues[i],
+            const processesess = {
+                processescesesTime : inputValues[i],
                 priority: parseFloat(document.getElementById(`p${i+1}p`).value),  
             }
-            processesArray[i] = process;
+            processesessesArray[i] = processesess;
         }
-        output.innerText = OPA(processesArray);
+        output.innerText = OPA(processesessesArray);
         inputValues = cleanArray(inputValues);
     } else if(value == "KSJF") {
         console.log("In the ksjf");
-        output.innerText = KSJF(inputValues);
+        for(let i = 0; i < 5; i++) {
+        enterValues[i] = parseFloat(document.getElementById(`p${i+1}e`).value);
+        console.log(inputValues[i]);
+        }
+        processes = [];
+        for(let i = 0; i < 5; i++) {
+            processes[i] = new Process(inputValues[i],enterValues[i]);
+        }
+        output.innerText = KSJF(processes);
         inputValues = cleanArray(inputValues);
     }
 })
 
 //İlk gelen önce
-function FCFS(procceses) {
+function FCFS(processesceses) {
     let toplam = 0
     let currentTime = 0;
     for(let i = 1; i < 5;i++) {
-        currentTime = currentTime + parseFloat(procceses[i]);
+        currentTime = currentTime + parseFloat(processesceses[i]);
         toplam = toplam + parseFloat(currentTime);
         console.log(`i:${i},current time: ${currentTime}, toplam: ${toplam}`);
     }
@@ -89,8 +107,8 @@ function FCFS(procceses) {
 }
 
 //Kısa süreli önce
-function SJF(procceses) {
-    sortedArray = procceses.sort();
+function SJF(processesceses) {
+    sortedArray = processesceses.sort();
     console.log(sortedArray);
     let toplam = 0;
     let currentTime = 0;
@@ -104,11 +122,11 @@ function SJF(procceses) {
 }
 
 //Zaman döngülü algoritma
-function LTA(procceses,timeFrame) {
+function LTA(processesceses,timeFrame) {
     //Bekleme sürelerini eklediğimiz dizi
     let wt = [];
     //Kalan sürelerin olduğu dizi
-    let remaningTime = procceses;
+    let remaningTime = processesceses;
     //Current time
     let t = 0;
     //Bütün işlemler tamamlanana kadar döngüyü çalıştırır
@@ -132,7 +150,7 @@ function LTA(procceses,timeFrame) {
                     t = t + remaningTime[i];
 
                     //Bekleme süresini diziye ekliyoruz
-                    wt[i] = t - procceses[i];
+                    wt[i] = t - processesceses[i];
 
                     //Kalan süreyi 0 a ekliyoruz
                     remaningTime[i] = 0;
@@ -152,87 +170,109 @@ function LTA(procceses,timeFrame) {
     return toplam / 5;
 }
 
-function OPA(processes) {
+function OPA(processesesses) {
     let toplam = 0;
     let waitingArray = [];
     waitingArray[0] = 0;
     //Bubble sort kullanarak süreleri ve öncelikleri ayarlarız
-    for (let i = 0; i < processes.length - 1; i++) {
-        for (let j = 0; j < processes.length - i - 1; j++) {
-            if (processes[j].priority > processes[j + 1].priority) {
-                // Swap the processes
-                let temp = processes[j];
-                processes[j] = processes[j + 1];
-                processes[j + 1] = temp;
+    for (let i = 0; i < processesesses.length - 1; i++) {
+        for (let j = 0; j < processesesses.length - i - 1; j++) {
+            if (processesesses[j].priority > processesesses[j + 1].priority) {
+                // Swap the processesesses
+                let temp = processesesses[j];
+                processesesses[j] = processesesses[j + 1];
+                processesesses[j + 1] = temp;
             }
         }
     }
 
     for(let i = 1; i < 5; i++) {
-        waitingArray[i] = parseFloat(processes[i-1].proccesesTime) + waitingArray[i - 1];
+        waitingArray[i] = parseFloat(processesesses[i-1].processescesesTime) + waitingArray[i - 1];
     }
 
     // Print waiting times
-    console.log("Waiting times for each process:");
-    for (let i = 0; i < processes.length; i++) {
+    console.log("Waiting times for each processesess:");
+    for (let i = 0; i < processesesses.length; i++) {
         toplam +=  waitingArray[i];
     }
     return toplam / 5;
 }
 
-// Kesilmeli SJF (Preemptive Shortest Job First) Algorithm
 function KSJF(processes) {
-    let n = processes.length;
-    let remainingTime = [...processes]; // Kalan işlem süreleri
-    let waitingTime = new Array(n).fill(0); // Bekleme süreleri
-    let completionTime = new Array(n).fill(0); // Tamamlanma süreleri
-    let currentTime = 0; // Şu anki zaman
-    let completed = 0; // Tamamlanan işlemler
-    let shortest = -1; // En kısa işlem
-    let finishTime; // Bitirme zamanı
+    let wt = []; // Bekleme sürelerini tutacak dizi
+    let n = processes.length; // İşlem sayısı
+    let rt = new Array(n); // Kalan zamanları tutacak dizi
 
-    while (completed != n) {
-        // En kısa kalan süresi olan işlemi bul
-        let minm = Number.MAX_SAFE_INTEGER;
+    // Burst sürelerini rt dizisine kopyala
+    for (let i = 0; i < n; i++) {
+        rt[i] = processes[i].bt;
+    }
+
+    let complete = 0; // Tamamlanmış işlem sayısı
+    let t = 0; // Geçen zaman
+    let minm = Number.MAX_VALUE; // Minimum kalan süre
+    let shortest = 0; // En kısa süreli işlemi tutacak değişken
+    let check = false; // İşlem bulunup bulunmadığını kontrol eder
+
+    // Tüm işlemler tamamlanana kadar devam et
+    while (complete != n) {
+        // Mevcut zaman t'ye kadar gelmiş olan işlemler arasında en kısa kalan süreyi bul
         for (let j = 0; j < n; j++) {
-            if ((remainingTime[j] > 0) && (processes[j] <= currentTime) && (remainingTime[j] < minm)) {
-                minm = remainingTime[j];
+            if ((processes[j].art <= t) && (rt[j] < minm) && rt[j] > 0) {
+                minm = rt[j];
                 shortest = j;
+                check = true;
             }
         }
 
-        if (shortest == -1) {
-            currentTime++;
+        // Eğer uygun bir işlem bulunamazsa, zamanı artır
+        if (check == false) {
+            t++;
             continue;
         }
 
-        // En kısa işlemin kalan süresini azalt
-        remainingTime[shortest]--;
+        // Kalan süreyi bir azalt
+        rt[shortest]--;
 
-        // Eğer işlem tamamlanmışsa
-        if (remainingTime[shortest] == 0) {
-            completed++;
-            finishTime = currentTime + 1;
-            completionTime[shortest] = finishTime;
-            waitingTime[shortest] = finishTime - processes[shortest];
+        // Minimum kalan süreyi güncelle
+        minm = rt[shortest];
+        if (minm == 0)
+            minm = Number.MAX_VALUE;
+
+        // Eğer bir işlem tamamen bittiyse
+        if (rt[shortest] == 0) {
+            // Tamamlanan işlem sayısını artır
+            complete++;
+            check = false;
+
+            // Mevcut işlemin bitiş zamanını bul
+            let finish_time = t + 1;
+
+            // Bekleme süresini hesapla
+            wt[shortest] = finish_time - processes[shortest].bt - processes[shortest].art;
+
+            // Bekleme süresi negatif olamaz
+            if (wt[shortest] < 0)
+                wt[shortest] = 0;
         }
 
         // Zamanı artır
-        currentTime++;
+        t++;
     }
 
     // Toplam bekleme süresini hesapla
     let totalWait = 0;
     for (let i = 0; i < n; i++) {
-        waitingTime[i] -= processes[i];
-        totalWait += waitingTime[i];
+        totalWait += wt[i];
     }
-    return totalWait / n;
+    
+    console.log(`Ortalama Bekleme Süresi: ${totalWait / n}`);
+    return totalWait / n; // Ortalama bekleme süresi
 }
 
-function cleanArray(procceses) {
-    for(let i = 0; i <procceses.length; i++) {
-        procceses[i] = 0;
+function cleanArray(processesceses) {
+    for(let i = 0; i <processesceses.length; i++) {
+        processesceses[i] = 0;
     }
-    return procceses;
+    return processesceses;
 }
